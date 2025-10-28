@@ -77,7 +77,7 @@ relay-server = '192.168.22.102'
 "@
 
 $toml2 = @"
-password = '00lQeHebBjpGg1pvuEaiU8AILLBSnK1fHj'
+password = 'Pa55word'
 "@
 
 if (-not (Test-Path $userConfigDir)) {
@@ -102,5 +102,6 @@ Write-Output "RustDesk lancé temporairement avec la configuration."
 
 
 C:\temp\rustdesk.exe
+
 
 
