@@ -76,9 +76,9 @@ direct-server = 'Y'
 relay-server = '192.168.22.102'
 "@
 
-$toml2 = @"
-password = '00lQeHebBjpGg1pvuEaiU8AILLBSnK1fHj'
-"@
+#$toml2 = @"
+#password = '00lQeHebBjpGg1pvuEaiU8AILLBSnK1fHj'
+#"@
 
 if (-not (Test-Path $userConfigDir)) {
     New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
@@ -87,8 +87,8 @@ if (-not (Test-Path $userConfigDir)) {
 Set-Content -Path $userConfigPath2 -Value $toml -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath2"
 
-Set-Content -Path $userConfigPath -Value $toml2 -Encoding UTF8
-Write-Output "Configuration TOML écrite dans : $userConfigPath"
+#Set-Content -Path $userConfigPath -Value $toml2 -Encoding UTF8
+#Write-Output "Configuration TOML écrite dans : $userConfigPath"
 
 
 # ==== 4) Lancement de RustDesk sans installation ====
@@ -102,3 +102,4 @@ Write-Output "RustDesk lancé temporairement avec la configuration."
 
 
 C:\temp\rustdesk.exe
+
