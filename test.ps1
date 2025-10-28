@@ -87,7 +87,7 @@ if (-not (Test-Path $userConfigDir)) {
 Set-Content -Path $userConfigPath2 -Value $toml -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath2"
 
-Set-Content -Path $userConfigPath -Value $toml -Encoding UTF8
+Set-Content -Path $userConfigPath -Value $toml2 -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath"
 
 
@@ -99,5 +99,6 @@ Write-Output "RustDesk lancé avec la configuration personnalisée."
 
 Write-Output "==== Script End ===="
 Write-Output "RustDesk lancé temporairement avec la configuration."
+
 
 C:\temp\rustdesk.exe
