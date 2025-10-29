@@ -1,58 +1,113 @@
 #!/usr/bin/env bash
-set -e
+# robust test.sh pour RustDesk AppImage
+# usage: bash test.sh
 
-echo "==== Script RustDesk Linux Start ===="
-
-# === Variables principales ===
-SERVER_IP="192.168.22.102"
-PORT_RDV="21116"
-PORT_DIRECT="21118"
-PASSWORD="Pa55word"
+set -u
+URL_LATEST="https://github.com/rustdesk/rustdesk/releases/latest"
+TMPDIR="$(mktemp -d /tmp/rustdesk.XXXXXX)"
+APPIMAGE_LOCAL=""
 CONFIG_DIR="$HOME/.config/rustdesk"
 CONFIG_FILE="$CONFIG_DIR/RustDesk.toml"
-TMP_DIR="/tmp/rustdesk_tmp"
-mkdir -p "$TMP_DIR"
 
-# === Création du dossier de config ===
+cleanup() {
+  # Ne supprime pas le binaire si tu veux garder pour debug, sinon uncomment
+  # rm -rf "$TMPDIR"
+  return 0
+}
+trap cleanup EXIT
+
+echo "==> START $(date)"
+
 mkdir -p "$CONFIG_DIR"
 
-# === Création du fichier RustDesk.toml ===
+# --- 1) Création du TOML (exemple) ---
+PASSWORD="Pa55word"
 cat > "$CONFIG_FILE" <<EOF
-rendezvous_server = '${SERVER_IP}:${PORT_RDV}'
+rendezvous_server = '192.168.22.102:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
 trusted_devices = ''
-password='${PASSWORD}'
+password = '${PASSWORD}'
 
 [options]
-local-ip-addr = '$(hostname -I | awk '{print $1}')'
-key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
-api-server = 'http://${SERVER_IP}'
-direct-access-port = '${PORT_DIRECT}'
-custom-rendezvous-server = '${SERVER_IP}'
+api-server = 'http://192.168.22.102'
 verification-method = 'use-permanent-password'
+relay-server = '192.168.22.102'
+direct-access-port = '21118'
+local-ip-addr = '127.0.0.1'
+custom-rendezvous-server = '192.168.22.102'
 direct-server = 'Y'
-relay-server = '${SERVER_IP}'
+key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
 EOF
 
-echo "[✔] Fichier de configuration créé dans : $CONFIG_FILE"
+echo "[OK] Config written to $CONFIG_FILE"
 
-# === Téléchargement de la dernière version de RustDesk ===
-LATEST=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/rustdesk/rustdesk/releases/latest)
-VERSION="${LATEST##*/}"
-APPIMAGE="rustdesk-${VERSION}-x86_64.AppImage"
-URL="https://github.com/rustdesk/rustdesk/releases/download/${VERSION}/${APPIMAGE}"
+# --- 2) Resolve latest version tag via curl (follow redirects) ---
+echo "[INFO] Resolving latest release..."
+# we capture the final URL after redirects
+final=$(curl -fsSL -o /dev/null -w "%{url_effective}" "$URL_LATEST") || {
+  echo "[ERR] Cannot reach $URL_LATEST"
+  exit 2
+}
+echo "[DEBUG] final URL: $final"
+version="${final##*/}"
+if [ -z "$version" ]; then
+  echo "[ERR] Could not parse version from $final"
+  exit 3
+fi
+echo "[OK] Detected version: $version"
 
-echo "[→] Téléchargement de RustDesk ${VERSION}..."
-curl -L -o "${TMP_DIR}/${APPIMAGE}" "$URL"
+# --- 3) Build AppImage URL and download ---
+APPIMAGE_NAME="rustdesk-${version}-x86_64.AppImage"
+APPIMAGE_URL="https://github.com/rustdesk/rustdesk/releases/download/${version}/${APPIMAGE_NAME}"
+echo "[INFO] AppImage URL: $APPIMAGE_URL"
 
-chmod +x "${TMP_DIR}/${APPIMAGE}"
-echo "[✔] RustDesk téléchargé dans ${TMP_DIR}/${APPIMAGE}"
+OUT="$TMPDIR/$APPIMAGE_NAME"
+echo "[INFO] Downloading to $OUT ..."
+if ! curl -fL "$APPIMAGE_URL" -o "$OUT"; then
+  echo "[ERR] Download failed (curl). Check URL or network."
+  ls -la "$TMPDIR"
+  exit 4
+fi
+echo "[OK] Download complete."
 
-# === Lancement de RustDesk ===
-echo "[→] Lancement de RustDesk avec configuration..."
-"${TMP_DIR}/${APPIMAGE}" --config "$CONFIG_FILE" &
+# --- 4) Make executable ---
+chmod +x "$OUT" || { echo "[ERR] chmod failed"; exit 5; }
+echo "[OK] chmod +x done."
 
-echo "[✔] RustDesk lancé temporairement avec la configuration personnalisée."
-echo "==== Script RustDesk Linux End ===="
+# Optional: check file type
+file "$OUT"
+
+# --- 5) Try to run AppImage (foreground to show errors) ---
+echo "[INFO] Running AppImage (first attempt: normal run)..."
+# try normal run and capture output
+"$OUT" --config "$CONFIG_FILE"
+rc=$?
+if [ $rc -eq 0 ]; then
+  echo "[OK] AppImage executed successfully (exit 0)."
+  APPIMAGE_LOCAL="$OUT"
+  exit 0
+else
+  echo "[WARN] Normal run returned exit code $rc. Trying fallback (extract-and-run)."
+fi
+
+# --- 6) Fallback: use --appimage-extract-and-run if available (no FUSE)
+if "$OUT" --appimage-extract-and-run --help >/dev/null 2>&1; then
+  echo "[INFO] Attempting fallback: --appimage-extract-and-run"
+  "$OUT" --appimage-extract-and-run --config "$CONFIG_FILE"
+  rc=$?
+  if [ $rc -eq 0 ]; then
+    echo "[OK] AppImage extract-and-run succeeded."
+    APPIMAGE_LOCAL="$OUT"
+    exit 0
+  else
+    echo "[ERR] extract-and-run failed with code $rc."
+    exit 6
+  fi
+else
+  echo "[INFO] AppImage does not support extract-and-run or help check failed."
+fi
+
+echo "[ERR] All attempts failed. Check output above for clues."
+exit 10
