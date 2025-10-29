@@ -109,5 +109,10 @@ else
   echo "[INFO] AppImage does not support extract-and-run or help check failed."
 fi
 
+# Lancer RustDesk avec l’AppImage téléchargée
+chmod +x /tmp/rustdesk.AppImage
+/tmp/rustdesk.AppImage
+
+
 echo "[ERR] All attempts failed. Check output above for clues."
 exit 10
