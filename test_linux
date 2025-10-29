@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -e
+
+echo "==== Script RustDesk Linux Start ===="
+
+# === Variables principales ===
+SERVER_IP="192.168.22.102"
+PORT_RDV="21116"
+PORT_DIRECT="21118"
+PASSWORD="Pa55word"
+CONFIG_DIR="$HOME/.config/rustdesk"
+CONFIG_FILE="$CONFIG_DIR/RustDesk.toml"
+TMP_DIR="/tmp/rustdesk_tmp"
+mkdir -p "$TMP_DIR"
+
+# === Création du dossier de config ===
+mkdir -p "$CONFIG_DIR"
+
+# === Création du fichier RustDesk.toml ===
+cat > "$CONFIG_FILE" <<EOF
+rendezvous_server = '${SERVER_IP}:${PORT_RDV}'
+nat_type = 1
+serial = 0
+unlock_pin = ''
+trusted_devices = ''
+password='${PASSWORD}'
+
+[options]
+local-ip-addr = '$(hostname -I | awk '{print $1}')'
+key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
+api-server = 'http://${SERVER_IP}'
+direct-access-port = '${PORT_DIRECT}'
+custom-rendezvous-server = '${SERVER_IP}'
+verification-method = 'use-permanent-password'
+direct-server = 'Y'
+relay-server = '${SERVER_IP}'
+EOF
+
+echo "[✔] Fichier de configuration créé dans : $CONFIG_FILE"
+
+# === Téléchargement de la dernière version de RustDesk ===
+LATEST=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/rustdesk/rustdesk/releases/latest)
+VERSION="${LATEST##*/}"
+APPIMAGE="rustdesk-${VERSION}-x86_64.AppImage"
+URL="https://github.com/rustdesk/rustdesk/releases/download/${VERSION}/${APPIMAGE}"
+
+echo "[→] Téléchargement de RustDesk ${VERSION}..."
+curl -L -o "${TMP_DIR}/${APPIMAGE}" "$URL"
+
+chmod +x "${TMP_DIR}/${APPIMAGE}"
+echo "[✔] RustDesk téléchargé dans ${TMP_DIR}/${APPIMAGE}"
+
+# === Lancement de RustDesk ===
+echo "[→] Lancement de RustDesk avec configuration..."
+"${TMP_DIR}/${APPIMAGE}" --config "$CONFIG_FILE" &
+
+echo "[✔] RustDesk lancé temporairement avec la configuration personnalisée."
+echo "==== Script RustDesk Linux End ===="
