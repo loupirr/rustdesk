@@ -28,7 +28,7 @@ Ce dépôt contient des ressources et des scripts pour installer et lancer le cl
 ### Linux
 Le script d'installation Linux s'exécute en une ligne. Exécutez dans un terminal :
 ```bash
-curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/loupirr/rustdesk/refs/heads/main/install_temporaire/install_client-linux | bash
+curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/loupirr/rustdesk/refs/heads/main/install_temporaire/linux/install_client-linux | bash
 ```
 Le script téléchargera et installera le client, puis configurera les permissions nécessaires. Lisez le script avant exécution si vous souhaitez vérifier son contenu.
 
