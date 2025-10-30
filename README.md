@@ -19,7 +19,7 @@ Ce dépôt contient des ressources et des scripts pour installer et lancer le cl
 
 ---
 
-## Installation
+## Installation temporaire
 
 ### Windows
 1. Téléchargez le fichier .bin depuis répertoire Github.
