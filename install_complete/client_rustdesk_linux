@@ -1,1 +1,54 @@
+#!/bin/bash
 
+# ==============================
+# INSTALLATEUR RUSTDESK LINUX
+# ==============================
+
+# Variables
+latest="https://github.com/rustdesk/rustdesk/releases/latest"
+download_dir="$HOME/Downloads"
+tmpfile="$download_dir/rustdesk.AppImage"
+config_dir="$HOME/.config/rustdesk"
+config_file="$config_dir/RustDesk.toml"
+
+# Création des dossiers nécessaires
+mkdir -p "$download_dir"
+mkdir -p "$config_dir"
+
+# Récupérer la dernière version disponible
+version=$(curl -s -I "$latest" | grep -i location | awk -F'/' '{print $NF}' | tr -d '\r\n')
+echo " Dernière version détectée : $version"
+
+# Construire l'URL de téléchargement
+url="https://github.com/rustdesk/rustdesk/releases/download/$version/rustdesk-$version-x86_64.AppImage"
+echo " Téléchargement depuis : $url"
+
+# Télécharger le fichier AppImage
+wget -O "$tmpfile" "$url"
+
+# Rendre exécutable
+chmod +x "$tmpfile"
+
+# Créer le fichier de configuration
+cat > "$config_file" <<EOF
+rendezvous_server = '192.168.22.102:21116'
+nat_type = 1
+serial = 0
+unlock_pin = ''
+
+[options]
+api-server = 'http://192.168.22.102'
+verification-method = 'use-permanent-password'
+relay-server = '192.168.22.102'
+direct-access-port = '21118'
+local-ip-addr = '192.168.22.49'
+custom-rendezvous-server = '192.168.22.102'
+direct-server = 'Y'
+key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
+password = 'Pa55word'
+EOF
+
+echo " Configuration RustDesk enregistrée dans : $config_file"
+echo " Lancement de RustDesk..."
+sleep 2s
+"$tmpfile" &
