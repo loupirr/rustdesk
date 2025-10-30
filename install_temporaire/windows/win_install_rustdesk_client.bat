@@ -1,7 +1,7 @@
 @echo off
 
 
-set "url=https://raw.githubusercontent.com/loupirr/rustdesk/refs/heads/main/install_temporaire/test.ps1"
+set "url=https://raw.githubusercontent.com/loupirr/rustdesk/refs/heads/main/install_temporaire/windows/test.ps1"
 set "local=C:\Temp\test.ps1"
 
 REM Crée C:\Temp s'il n'existe pas
@@ -17,4 +17,5 @@ echo Executing the downloaded script...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%local%"
 
 pause
+
 
