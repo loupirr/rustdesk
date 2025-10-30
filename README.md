@@ -15,25 +15,15 @@ Ce dépôt contient des ressources et des scripts pour installer et lancer le cl
 
 ## Prérequis
 - Windows 10/11 ou une distribution Linux moderne
-- Accès à Internet pour télécharger les binaires et scripts
-- Droits suffisants pour exécuter des scripts (sur Windows, exécuter en tant qu'administrateur si nécessaire)
+- Accès à Internet pour télécharger les binaires (.bin) et scripts
 
 ---
 
 ## Installation
 
 ### Windows
-1. Téléchargez l'archive ou le dossier contenant les fichiers Windows depuis les releases du dépôt (ou récupérez le repo).
-2. Décompressez si nécessaire.
-3. Double-cliquez sur le fichier `install.bat` ou `run.bat` fourni, ou exécutez-le en tant qu'administrateur si une élévation est nécessaire.
-
-Exemple (PowerShell) :
-```powershell
-# Si vous avez un script local
-.\install.bat
-```
-
-> Remarque : si le dépôt ne contient pas de binaire Windows, vous pouvez compiler depuis la source (voir la section "Compiler depuis la source").
+1. Téléchargez le fichier .bin depuis répertoire Github.
+3. Double-cliquez sur le fichier .bat fourn
 
 ### Linux
 Le script d'installation Linux s'exécute en une ligne. Exécutez dans un terminal :
@@ -47,8 +37,8 @@ Le script téléchargera et installera le client, puis configurera les permissio
 ## Utilisation
 Après l'installation :
 
-- Lancez l'application depuis le menu (Linux) ou en double-cliquant l'exécutable / en lançant le `.bat` (Windows).
-- Configurez l'ID et le mot de passe selon l'interface RustDesk.
-- Pour toute configuration avancée (serveur relais, chiffrement, etc.), reportez-vous à la documentation officielle de RustDesk.
+- Rustdesk je lance tout seul de manière temporaire avec les configuration pour se connecter au serveur.
+- Communiquer votre ID à la personne voulue.
+- Le MDP est le même pour tout les clients (pour le changer, aller voir dans le fichier d'installation)
 
 ---
