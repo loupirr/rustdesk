@@ -161,14 +161,14 @@ if (Test-Path $rustdeskLogDir) {
     $found = $false
     foreach ($log in $logs) {
         if (Select-String -Path $log.FullName -Pattern "password") {
-            Write-Log "✅ Password entry found in $($log.Name)."
+            Write-Log " Password entry found in $($log.Name)."
             Write-Output "Password set successfully (verified in $($log.Name))."
             $found = $true
             break
         }
     }
     if (-not $found) {
-        Write-Log "⚠️ No password entry found in recent logs."
+        Write-Log " No password entry found in recent logs."
         Write-Output "Warning: No password confirmation detected in logs."
     }
 } else {
