@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# Variables
+latest="https://github.com/rustdesk/rustdesk/releases/latest"
+download_dir="$HOME/Downloads"
+tmpfile="$download_dir/rustdesk.AppImage"
+
+# Créer le dossier si nécessaire
+mkdir -p "$download_dir"
+
+# Récupérer la dernière version
+version=$(curl -s -I $latest | grep -i location | awk -F'/' '{print $NF}' | tr -d '\r\n')
+echo "Dernière version : $version"
+
+# Construire l'URL de téléchargement
+url="https://github.com/rustdesk/rustdesk/releases/download/$version/rustdesk-$version-x86_64.AppImage"
+echo "Téléchargement depuis : $url"
+
+# Télécharger le fichier
+wget -O "$tmpfile" "$url"
+
+# Rendre exécutable
+chmod +x "$tmpfile"
+
+# Assign a random value to the password variable 
+ 
+
+config_dir="$HOME/.config/rustdesk"
+
+mkdir -p "$config_dir"
+password="Pa55word"
+config_file="
+rendezvous_server = '192.168.22.102:21116'
+nat_type = 1
+serial = 0
+unlock_pin = ''
+
+[options]
+api-server = 'http://192.168.22.102'
+verification-method = 'use-permanent-password'
+relay-server = '192.168.22.102'
+direct-access-port = '21118'
+local-ip-addr = '192.168.22.49'
+custom-rendezvous-server = '192.168.22.102'
+direct-server = 'Y'
+key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
+"
+echo "password = '$password'" > ~/.config/rustdesk/RustDesk.toml
+cat  ~/.config/rustdesk/RustDesk.toml
+sleep 4s
+echo "$config_file" > ~/.config/rustdesk/RustDesk2.toml
+cat ~/.config/rustdesk/RustDesk2.toml
+sleep 3s
+
+echo $tmpfile
+sleep 3s
+$tmpfile
+
+rm -R -f $download_dir
+
+echo "RustDesk lancé !"
