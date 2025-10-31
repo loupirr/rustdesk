@@ -23,7 +23,7 @@ Ce dépôt contient des ressources et des scripts pour installer et lancer le cl
 
 ### Windows
 1. Téléchargez le fichier .bin depuis répertoire Github.
-3. Double-cliquez sur le fichier .bat fourn
+3. Double-cliquez sur le fichier .bat fournis
 
 ### Linux
 Le script d'installation Linux s'exécute en une ligne. Exécutez dans un terminal :
