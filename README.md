@@ -34,6 +34,22 @@ Le script téléchargera et installera le client, puis configurera les permissio
 
 ---
 
+## Installation complete
+
+### Windows
+1.
+2. 
+
+### Linux
+Le script d'installation Linux s'exécute en une ligne. Exécutez dans un terminal :
+```bash
+sudo curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/loupirr/rustdesk/refs/heads/main/install_temporaire/linux/install_client-linux | bash
+```
+Le script téléchargera et installera le client, puis configurera les permissions nécessaires. Lisez le script avant exécution si vous souhaitez vérifier son contenu.
+
+---
+
+
 ## Utilisation
 Après l'installation :
 
