@@ -1,54 +1,102 @@
 #!/bin/bash
 
-# ==============================
-# INSTALLATEUR RUSTDESK LINUX
-# ==============================
+# Assign a random value to the password variable
+rustdesk_pw='Pa55word'
 
-# Variables
-latest="https://github.com/rustdesk/rustdesk/releases/latest"
-download_dir="$HOME/Downloads"
-tmpfile="$download_dir/rustdesk.AppImage"
-config_dir="$HOME/.config/rustdesk"
-config_file="$config_dir/RustDesk.toml"
-
-# Création des dossiers nécessaires
-mkdir -p "$download_dir"
-mkdir -p "$config_dir"
-
-# Récupérer la dernière version disponible
-version=$(curl -s -I "$latest" | grep -i location | awk -F'/' '{print $NF}' | tr -d '\r\n')
-echo " Dernière version détectée : $version"
-
-# Construire l'URL de téléchargement
-url="https://github.com/rustdesk/rustdesk/releases/download/$version/rustdesk-$version-x86_64.AppImage"
-echo " Téléchargement depuis : $url"
-
-# Télécharger le fichier AppImage
-wget -O "$tmpfile" "$url"
-
-# Rendre exécutable
-chmod +x "$tmpfile"
-
-# Créer le fichier de configuration
-cat > "$config_file" <<EOF
-rendezvous_server = '192.168.22.102:21116'
-nat_type = 1
-serial = 0
-unlock_pin = ''
-
-[options]
-api-server = 'http://192.168.22.102'
-verification-method = 'use-permanent-password'
-relay-server = '192.168.22.102'
-direct-access-port = '21118'
-local-ip-addr = '192.168.22.49'
-custom-rendezvous-server = '192.168.22.102'
-direct-server = 'Y'
+# Get your config string from your Web portal and Fill Below
+rustdesk_cfg="[options]
+av1-test = 'N'
+custom-rendezvous-server = '192.168.22.46'
 key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
-password = 'Pa55word'
-EOF
+api-server = 'http://192.168.22.46'
+relay-server = '192.168.22.46'
+verification-method = 'use-permanent-password'
+local-ip-addr = '192.168.22.41'"
 
-echo " Configuration RustDesk enregistrée dans : $config_file"
-echo " Lancement de RustDesk..."
-sleep 2s
-"$tmpfile" &
+################################## Please Do Not Edit Below This Line #########################################
+
+# Check if the script is being run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root."
+    exit 1
+fi
+
+# Identify OS
+if [ -f /etc/os-release ]; then
+    # freedesktop.org and systemd
+    . /etc/os-release
+    OS=$NAME
+    VER=$VERSION_ID
+
+    UPSTREAM_ID=${ID_LIKE,,}
+
+    # Fallback to ID_LIKE if ID was not 'ubuntu' or 'debian'
+    if [ "${UPSTREAM_ID}" != "debian" ] && [ "${UPSTREAM_ID}" != "ubuntu" ]; then
+        UPSTREAM_ID="$(echo ${ID_LIKE,,} | sed s/\"//g | cut -d' ' -f1)"
+    fi
+
+elif type lsb_release >/dev/null 2>&1; then
+    # linuxbase.org
+    OS=$(lsb_release -si)
+    VER=$(lsb_release -sr)
+elif [ -f /etc/lsb-release ]; then
+    # For some versions of Debian/Ubuntu without lsb_release command
+    . /etc/lsb-release
+    OS=$DISTRIB_ID
+    VER=$DISTRIB_RELEASE
+elif [ -f /etc/debian_version ]; then
+    # Older Debian, Ubuntu, etc.
+    OS=Debian
+    VER=$(cat /etc/debian_version)
+elif [ -f /etc/SuSE-release ]; then
+    # Older SuSE etc.
+    OS=SuSE
+    VER=$(cat /etc/SuSE-release)
+elif [ -f /etc/redhat-release ]; then
+    # Older Red Hat, CentOS, etc.
+    OS=RedHat
+    VER=$(cat /etc/redhat-release)
+else
+    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+    OS=$(uname -s)
+    VER=$(uname -r)
+fi
+
+# Install RustDesk
+
+echo "Installing RustDesk"
+if [ "${ID}" = "debian" ] || [ "$OS" = "Ubuntu" ] || [ "$OS" = "Debian" ] || [ "${UPSTREAM_ID}" = "ubuntu" ] || [ "${UPSTREAM_ID}" = "debian" ]; then
+    wget https://github.com/rustdesk/rustdesk/releases/download/1.2.6/rustdesk-1.2.6-x86_64.deb
+    apt-get install -fy ./rustdesk-1.2.6-x86_64.deb > null
+elif [ "$OS" = "CentOS" ] || [ "$OS" = "RedHat" ] || [ "$OS" = "Fedora Linux" ] || [ "${UPSTREAM_ID}" = "rhel" ] || [ "$OS" = "Almalinux" ] || [ "$OS" = "Rocky*" ] ; then
+    wget https://github.com/rustdesk/rustdesk/releases/download/1.2.6/rustdesk-1.2.6-0.x86_64.rpm
+    yum localinstall ./rustdesk-1.2.6-0.x86_64.rpm -y > null
+else
+    echo "Unsupported OS"
+    # here you could ask the user for permission to try and install anyway
+    # if they say yes, then do the install
+    # if they say no, exit the script
+    exit 1
+fi
+
+# Run the rustdesk command with --get-id and store the output in the rustdesk_id variable
+rustdesk_id=$(rustdesk --get-id)
+
+# Apply new password to RustDesk
+rustdesk --password $rustdesk_pw &> /dev/null
+
+rustdesk --config $rustdesk_cfg
+
+systemctl restart rustdesk
+
+echo "..............................................."
+# Check if the rustdesk_id is not empty
+if [ -n "$rustdesk_id" ]; then
+    echo "RustDesk ID: $rustdesk_id"
+else
+    echo "Failed to get RustDesk ID."
+fi
+
+# Echo the value of the password variable
+echo "Password: $rustdesk_pw"
+echo "..............................................."
