@@ -33,12 +33,13 @@ curl --proto '=https' --tlsv1.2 -sSfL https://raw.githubusercontent.com/loupirr/
 Le script téléchargera et installera le client, puis configurera les permissions nécessaires. Lisez le script avant exécution si vous souhaitez vérifier son contenu.
 
 ---
+---
 
 ## Installation complete ( autorisation requise )
 
 ### Windows
-1.
-2. 
+1. Téléchargez le fichier .bat depuis répertoire Github.
+2. Double-cliquez sur le fichier .bat fournis
 
 ### Linux
 Le script d'installation Linux s'exécute en une ligne. Exécutez dans un terminal en root:
