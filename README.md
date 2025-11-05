@@ -34,7 +34,7 @@ Le script téléchargera et installera le client, puis configurera les permissio
 
 ---
 
-## Installation complete
+## Installation complete ( autorisation requise )
 
 ### Windows
 1.
