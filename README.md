@@ -2,7 +2,7 @@
 
 RustDesk — client léger pour la prise de contrôle à distance.
 
-Ce dépôt contient des ressources et des scripts pour installer et lancer le client RustDesk sur Windows et Linux. Ce README présente des instructions claires d'installation, d'utilisation et de contribution.
+Ce dépôt contient des ressources et des scripts pour installer et lancer le client RustDesk sur Windows et Linux. Ce README présente des instructions claires d'installation.
 
 ---
 
