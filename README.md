@@ -22,7 +22,7 @@ Ce dépôt contient des ressources et des scripts pour installer et lancer le cl
 ## Installation temporaire
 
 ### Windows
-1. Téléchargez le fichier .bin depuis répertoire Github.
+1. Téléchargez le fichier .bat depuis répertoire Github.
 3. Double-cliquez sur le fichier .bat fournis
 
 ### Linux
