@@ -65,7 +65,7 @@ unlock_pin = ''
 trusted_devices = ''
 
 [options]
-key = ''
+key = 'ra5dXmgd1trQdRPZ6c8VwM0TJcGOod0CIR9BkZtUu9s='
 api-server = ''
 direct-access-port = '21118'
 custom-rendezvous-server = '185.81.55.61'
