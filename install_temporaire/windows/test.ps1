@@ -65,14 +65,14 @@ unlock_pin = ''
 trusted_devices = ''
 
 [options]
-key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
-api-server = 'http://185.81.55.61'
+key = ''
+api-server = ''
 direct-access-port = '21118'
 custom-rendezvous-server = '185.81.55.61'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 direct-server = 'Y'
-relay-server = '185.81.55.61'
+relay-server = ''
 "@
 
 $toml2 = @"
