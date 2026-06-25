@@ -58,22 +58,18 @@ Write-Log "Téléchargement terminé."
 
 # ==== 3) Création de la configuration TOML ====
 $toml = @"
-rendezvous_server = '192.168.22.102:21116'
+rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
 trusted_devices = ''
 
 [options]
-local-ip-addr = '192.168.22.196'
-key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
-api-server = 'http://192.168.22.102'
-direct-access-port = '21118'
-custom-rendezvous-server = '192.168.22.102'
+key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
+custom-rendezvous-server = '185.81.55.61'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 direct-server = 'Y'
-relay-server = '192.168.22.102'
 "@
 
 $toml2 = @"
