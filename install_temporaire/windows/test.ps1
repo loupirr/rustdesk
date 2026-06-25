@@ -58,7 +58,7 @@ Write-Log "Téléchargement terminé."
 
 # ==== 3) Création de la configuration TOML ====
 $toml = @"
-rendezvous_server = '192.168.22.102:21116'
+rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
