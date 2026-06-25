@@ -13,19 +13,19 @@ Write-Log "==== Script Start ===="
 
 
 try {
-    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
+    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
 }
 catch {
-    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
-    Exit
+    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
+    Exit
 }
 
 
 $lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue).Headers["Location"]
 
 if ($lien -like ""){
-    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
-    Exit
+    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
+    Exit
 }
 
 
@@ -33,32 +33,32 @@ $split = $lien.split("/")
 $bou = -1
 $requiredVersion = $split[-1]
 foreach ($item in $split){
-    $bou +=1
-    if ($item -eq "tag"){
-        $split[$bou] = "download"
-    }
-   
+    $bou +=1
+    if ($item -eq "tag"){
+        $split[$bou] = "download"
+    }
+   
 }
 
 $fin = $split -join "/"
 Write-Host $fin
 Write-Host $requiredVersion
 
-$downloadUrl   = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
+$downloadUrl   = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
 Write-Host $downloadUrl
 
 # ==== 2) Téléchargement de RustDesk portable ====
 if (-not (Test-Path "C:\Temp")) {
-    New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
-    Write-Log "Création du dossier C:\temp"
-    }
+    New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
+    Write-Log "Création du dossier C:\temp"
+    }
 Write-Log "Téléchargement de RustDesk..."
 Invoke-WebRequest -Uri $downloadUrl -OutFile $installTempPath -UseBasicParsing
 Write-Log "Téléchargement terminé."
 
 # ==== 3) Création de la configuration TOML ====
 $toml = @"
-rendezvous_server = '185.81.55.61:21116'
+rendezvous_server = '192.168.22.102:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
@@ -66,19 +66,22 @@ trusted_devices = ''
 
 [options]
 key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
+api-server = 'http://185.81.55.61'
+direct-access-port = '21118'
 custom-rendezvous-server = '185.81.55.61'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 direct-server = 'Y'
+relay-server = '185.81.55.61'
 "@
 
 $toml2 = @"
-password = 'Pa55word'
+password = 'Password1'
 "@
 
 if (-not (Test-Path $userConfigDir)) {
-    New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
-    Write-Output "Dossier de configuration créé : $userConfigDir"
+    New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
+    Write-Output "Dossier de configuration créé : $userConfigDir"
 }
 Set-Content -Path $userConfigPath2 -Value $toml -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath2"
