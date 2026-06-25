@@ -57,12 +57,13 @@ Invoke-WebRequest -Uri $downloadUrl -OutFile $installTempPath -UseBasicParsing
 Write-Log "Téléchargement terminé."
 
 # ==== 3) Création de la configuration TOML ====
-$toml = @"
+$toml_unique = @"
 rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
 trusted_devices = ''
+password = 'Pa55word'
 
 [options]
 key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
@@ -72,29 +73,24 @@ verification-method = 'use-permanent-password'
 direct-server = 'Y'
 "@
 
-$toml2 = @"
-password = 'Pa55word'
-"@
-
 if (-not (Test-Path $userConfigDir)) {
     New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
     Write-Output "Dossier de configuration créé : $userConfigDir"
 }
-Set-Content -Path $userConfigPath2 -Value $toml -Encoding UTF8
-Write-Output "Configuration TOML écrite dans : $userConfigPath2"
 
-Set-Content -Path $userConfigPath -Value $toml2 -Encoding UTF8
+# On applique TOUT dans le fichier officiel RustDesk.toml
+Set-Content -Path $userConfigPath -Value $toml_unique -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath"
 
 
 # ==== 4) Lancement de RustDesk sans installation ====
 Write-Output "Lancement de RustDesk portable..."
-Start-Process -FilePath $installTempPath -ArgumentList "--config", $userConfigPath2
+
+# Plus besoin de passer l'argument --config qui sème la confusion, RustDesk va lire RustDesk.toml tout seul
+Start-Process -FilePath $installTempPath
 
 Write-Output "RustDesk lancé avec la configuration personnalisée."
-
 Write-Output "==== Script End ===="
-Write-Output "RustDesk lancé temporairement avec la configuration."
 
 
 C:\temp\rustdesk.exe
