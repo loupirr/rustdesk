@@ -83,7 +83,6 @@ if (-not (Test-Path "C:\Temp")) {
 if (-not $skipInstall) {
     # ==== 2) Download and Install RustDesk ====
     Write-Log "Downloading RustDesk $requiredVersion..."
-    # Correction : Ajout de -UseBasicParsing pour le téléchargement de l'exécutable
     Invoke-WebRequest -Uri $rustdeskDownload -OutFile $installTempPath -UseBasicParsing
     Write-Log "Download completed."
 
@@ -100,7 +99,6 @@ if (-not $skipInstall) {
 }
 
 # ==== 4) Generate and Apply TOML Configuration ====
-# Correction : Remplacement des IPs locales par ton IP publique et ta clé
 $toml_network = @"
 rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
