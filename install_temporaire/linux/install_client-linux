@@ -30,20 +30,20 @@ config_dir="$HOME/.config/rustdesk"
 mkdir -p "$config_dir"
 password="Pa55word"
 config_file="
-rendezvous_server = '192.168.22.102:21116'
+rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
 
 [options]
-api-server = 'http://192.168.22.102'
+api-server = ''
 verification-method = 'use-permanent-password'
-relay-server = '192.168.22.102'
+relay-server = '185.81.55.61'
 direct-access-port = '21118'
-local-ip-addr = '192.168.22.49'
-custom-rendezvous-server = '192.168.22.102'
+#local-ip-addr = '192.168.22.49'
+custom-rendezvous-server = '185.81.55.61'
 direct-server = 'Y'
-key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
+key = 'ra5dXmgd1trQdRPZ6c8VwM0TJcGOod0CIR9BkZtUu9s='
 "
 echo "password = '$password'" > ~/.config/rustdesk/RustDesk.toml
 cat  ~/.config/rustdesk/RustDesk.toml
