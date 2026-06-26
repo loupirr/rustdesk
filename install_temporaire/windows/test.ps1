@@ -76,7 +76,8 @@ relay-server = ''
 "@
 
 $toml2 = @"
-password = 'Password1'
+password = '01AeX/Ao5O8kJig8WRUEkP3y0eT/7YBvnYnvKtNa7LKh//VsHNWwlnUbasgv2rJLjoFlHzf/mipLMSgB8W+WS7uCFa+Z52a9MMdZH49Hsni4rsfzWYBrCY'
+salt = '5ggkmmh2qyajdhf5u75k65ts4p5eptuu'
 "@
 
 if (-not (Test-Path $userConfigDir)) {
