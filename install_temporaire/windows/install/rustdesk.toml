@@ -1,0 +1,10 @@
+rendezvous_server = '185.81.55.61:21116'
+
+[options]
+key = 'ra5dXmgd1trQdRPZ6c8VwM0TJcGOod0CIR9BkZtUu9s='
+custom-rendezvous-server = '185.81.55.61'
+verification-method = 'use-permanent-password'
+
+[security]
+password = '01AeX/Ao5O8kJig8WRUEkP3y0eT/7YBvnYnvKtNa7LKh//VsHNWwlnUbasgv2rJLjoFlHzf/mipLMSgB8W+WS7uCFa+Z52a9MMdZH49Hsni4rsfzWYBrCY'
+salt = '5ggkmmh2qyajdhf5u75k65ts4p5eptuu'
