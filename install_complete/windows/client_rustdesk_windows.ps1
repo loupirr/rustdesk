@@ -3,28 +3,20 @@ $ErrorActionPreference = 'SilentlyContinue'  # Suppress non-terminating errors
 $logFile = "C:\Temp\rustdesk_script.log"
 
 # ==== Required Version and Paths ====
-
-
-
-
-
-
 try {
-    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
+    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -UseBasicParsing
 }
 catch {
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
     Exit
 }
 
-
-$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue).Headers["Location"]
+$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue -UseBasicParsing).Headers["Location"]
 
 if ($lien -like ""){
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
     Exit
 }
-
 
 $split = $lien.split("/")
 $bou = -1
@@ -34,32 +26,24 @@ foreach ($item in $split){
     if ($item -eq "tag"){
         $split[$bou] = "download"
     }
-   
 }
 
 $fin = $split -join "/"
 Write-Host $fin
 Write-Host $requiredVersion
 
-$rustdeskDownload   = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
+$rustdeskDownload    = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
 Write-Host $rustdeskDownload
-
-
-
-
-
-
-
 
 $installTempPath    = "C:\Temp\rustdesk.exe"
 $rustdeskExePath    = "C:\Program Files\RustDesk\rustdesk.exe"
 $rustdeskLogDir     = "$env:APPDATA\RustDesk\log"
-$userConfigPath     = "C:\Users\$env:USERNAME\AppData\Roaming\RustDesk\config\RustDesk2.toml"
-$serviceConfigPath  = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk2.toml"
 
-# Key (Base64) and Password (plain text) - GENERIC PLACEHOLDERS
-$rustdeskKey            = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
-$rustdeskPasswordPlain  = 'Pa55word'
+# Chemins des fichiers de configuration (Réseau d'un côté, Sécurité de l'autre)
+$userConfigPath2      = "C:\Users\$env:USERNAME\AppData\Roaming\RustDesk\config\RustDesk2.toml"
+$serviceConfigPath2   = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk2.toml"
+$userConfigPath       = "C:\Users\$env:USERNAME\AppData\Roaming\RustDesk\config\RustDesk.toml"
+$serviceConfigPath    = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk.toml"
 
 # ==== Logging Function ====
 function Write-Log {
@@ -99,7 +83,8 @@ if (-not (Test-Path "C:\Temp")) {
 if (-not $skipInstall) {
     # ==== 2) Download and Install RustDesk ====
     Write-Log "Downloading RustDesk $requiredVersion..."
-    Invoke-WebRequest -Uri $rustdeskDownload -OutFile $installTempPath
+    # Correction : Ajout de -UseBasicParsing pour le téléchargement de l'exécutable
+    Invoke-WebRequest -Uri $rustdeskDownload -OutFile $installTempPath -UseBasicParsing
     Write-Log "Download completed."
 
     Write-Log "Installing RustDesk..."
@@ -115,33 +100,49 @@ if (-not $skipInstall) {
 }
 
 # ==== 4) Generate and Apply TOML Configuration ====
-# Update the values below with your real server and allowed IPs if needed.
-$toml = @"
-rendezvous_server = '192.168.22.102:21116'
+# Correction : Remplacement des IPs locales par ton IP publique et ta clé
+$toml_network = @"
+rendezvous_server = '185.81.55.61:21116'
 nat_type = 1
 serial = 0
 unlock_pin = ''
 
 [options]
-api-server = 'http://192.168.22.102'
+api-server = 'http://185.81.55.61'
 direct-server = 'Y'
-local-ip-addr = '192.168.1.30'
-relay-server = '192.168.22.102'
+relay-server = '185.81.55.61'
 direct-access-port = '21118'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 key = 'EbE2XPrHtzDDYDo1dciBmCMlG5fP+xVX1PLJDZlDsZE='
-custom-rendezvous-server = '192.168.22.102'
+custom-rendezvous-server = '185.81.55.61'
 "@
 
-foreach ($path in @($userConfigPath, $serviceConfigPath)) {
+# Ajout du bloc sécurité contenant ton mot de passe et son sel hachés
+$toml_security = @"
+password = '01AeX/Ao5O8kJig8WRUEkP3y0eT/7YBvnYnvKtNa7LKh//VsHNWwlnUbasgv2rJLjoFlHzf/mipLMSgB8W+WS7uCFa+Z52a9MMdZH49Hsni4rsfzWYBrCY'
+salt = '5ggkmmh2qyajdhf5u75k65ts4p5eptuu'
+"@
+
+# Écriture des fichiers de configuration Réseau (RustDesk2.toml)
+foreach ($path in @($userConfigPath2, $serviceConfigPath2)) {
     $dir = Split-Path $path
     if (-not (Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
         Write-Log "Directory $dir created."
     }
-    Set-Content -Path $path -Value $toml -Encoding UTF8
-    Write-Log "TOML configuration written to $path."
+    Set-Content -Path $path -Value $toml_network -Encoding UTF8
+    Write-Log "Network TOML configuration written to $path."
+}
+
+# Écriture des fichiers de configuration Sécurité (RustDesk.toml)
+foreach ($path in @($userConfigPath, $serviceConfigPath)) {
+    $dir = Split-Path $path
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    Set-Content -Path $path -Value $toml_security -Encoding UTF8
+    Write-Log "Security TOML configuration (Hashed Password) written to $path."
 }
 
 # ==== 5) Start RustDesk Service ====
@@ -150,31 +151,8 @@ net start rustdesk | Out-Null
 Start-Sleep -Seconds 5
 
 # ==== 6) Set Access Password ====
-Write-Log "Setting RustDesk access password..."
-Start-Process -FilePath $rustdeskExePath -ArgumentList "--password", $rustdeskPasswordPlain -Wait
-Start-Sleep -Seconds 5
-
-# ==== 7) Validate Configuration in Logs ====
-Write-Log "Validating password configuration in logs..."
-if (Test-Path $rustdeskLogDir) {
-    $logs = Get-ChildItem -Path $rustdeskLogDir -Filter "*.log" | Sort-Object LastWriteTime -Descending | Select-Object -First 3
-    $found = $false
-    foreach ($log in $logs) {
-        if (Select-String -Path $log.FullName -Pattern "password") {
-            Write-Log " Password entry found in $($log.Name)."
-            Write-Output "Password set successfully (verified in $($log.Name))."
-            $found = $true
-            break
-        }
-    }
-    if (-not $found) {
-        Write-Log " No password entry found in recent logs."
-        Write-Output "Warning: No password confirmation detected in logs."
-    }
-} else {
-    Write-Log "RustDesk log directory not found: $rustdeskLogDir"
-    Write-Output "RustDesk log directory not found."
-}
+# Note : Cette étape n'est plus strictement obligatoire car le mot de passe est déjà injecté haché 
+# dans le fichier RustDesk.toml. On laisse le démarrage propre du service valider la configuration.
 
 Write-Log "==== Script End ===="
 Write-Output "Script completed. Check $logFile for more details."
