@@ -13,7 +13,7 @@ Write-Log "==== Script Start ===="
 
 
 try {
-    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
+    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -UseBasicParsing
 }
 catch {
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
@@ -21,7 +21,7 @@ catch {
 }
 
 
-$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue).Headers["Location"]
+$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue -UseBasicParsing).Headers["Location"]
 
 if ($lien -like ""){
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
