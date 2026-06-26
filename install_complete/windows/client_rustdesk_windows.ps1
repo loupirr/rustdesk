@@ -42,8 +42,9 @@ $rustdeskLogDir     = "$env:APPDATA\RustDesk\log"
 # Chemins des fichiers de configuration (Réseau d'un côté, Sécurité de l'autre)
 $userConfigPath2      = "C:\Users\$env:USERNAME\AppData\Roaming\RustDesk\config\RustDesk2.toml"
 $serviceConfigPath2   = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk2.toml"
-$userConfigPath       = "C:\Users\$env:USERNAME\AppData\Roaming\RustDesk\config\RustDesk.toml"
-$serviceConfigPath    = "C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk.toml"
+[byte[]]$AES_Key = @(237,54,246,139,216,69,197,5,192,223,11,127,2,138,159,9) # Exemple de clé
+$SecretPassword  = "76492d1116743f0423413b16050a5345MgB8AGgAagBqAHUATgAwAEgAdABoAFIASgA3AFEATgBTAGMAbwBKAGwAcQBJAHcAPQA9AHwANgA0ADkAYgBlADQAYQA5ADMANQAzADgAYwA2ADEAYQAzADAANwAxADMANQA5ADYANQA5ADkAYgA5ADkAMgAyADAAYQAyADQAMwA1A
+GQAOAAzAGIAMgBlAGEAYwAzADcAMAA2AGEAOQAyAGUANQA5AGYAZgAyADUAZgAwAGYAMAA=" # Exemple de texte chiffré
 
 # ==== Logging Function ====
 function Write-Log {
