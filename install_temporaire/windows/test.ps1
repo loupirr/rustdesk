@@ -1,4 +1,4 @@
-﻿# ==== Variables de base ====
+# ==== Variables de base ====
 $ErrorActionPreference = 'SilentlyContinue'
 $logFile = "C:\Temp\rustdesk_script.log"
 $installTempPath = "C:\Temp\rustdesk.exe"
@@ -13,7 +13,7 @@ Write-Log "==== Script Start ===="
 
 
 try {
-    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -UseBasicParsing
+    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
 }
 catch {
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
@@ -21,7 +21,7 @@ catch {
 }
 
 
-$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue -UseBasicParsing).Headers["Location"]
+$lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue).Headers["Location"]
 
 if ($lien -like ""){
     Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
@@ -65,19 +65,18 @@ unlock_pin = ''
 trusted_devices = ''
 
 [options]
-key = 'ra5dXmgd1trQdRPZ6c8VwM0TJcGOod0CIR9BkZtUu9s='
-api-server = ''
+key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
+api-server = 'http://185.81.55.61'
 direct-access-port = '21118'
 custom-rendezvous-server = '185.81.55.61'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 direct-server = 'Y'
-relay-server = ''
+relay-server = '185.81.55.61'
 "@
 
 $toml2 = @"
-password = '01AeX/Ao5O8kJig8WRUEkP3y0eT/7YBvnYnvKtNa7LKh//VsHNWwlnUbasgv2rJLjoFlHzf/mipLMSgB8W+WS7uCFa+Z52a9MMdZH49Hsni4rsfzWYBrCY'
-salt = '5ggkmmh2qyajdhf5u75k65ts4p5eptuu'
+password = 'Password1'
 "@
 
 if (-not (Test-Path $userConfigDir)) {
