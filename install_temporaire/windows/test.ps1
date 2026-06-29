@@ -44,7 +44,7 @@ $fin = $split -join "/"
 Write-Host $fin
 Write-Host $requiredVersion
 
-$downloadUrl   = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
+$downloadUrl = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
 Write-Host $downloadUrl
 
 # ==== 2) Téléchargement de RustDesk portable ====
