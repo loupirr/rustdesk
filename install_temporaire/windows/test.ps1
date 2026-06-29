@@ -6,26 +6,23 @@ $userConfigDir = "$env:APPDATA\RustDesk\config"
 $userConfigPath2 = "$userConfigDir\RustDesk2.toml"
 $userConfigPath = "$userConfigDir\RustDesk.toml"
 
-
 Write-Log "==== Script Start ===="
 
 # ==== 1) Récupération du lien de la dernière version ====
-
-
 try {
-    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
-}
-catch {
-    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
-    Exit
+    $lien = Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest"
 }
 
+catch {
+    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ    (lien) "
+    Exit
+}
 
 $lien = (Invoke-WebRequest -Uri "https://github.com/rustdesk/rustdesk/releases/latest" -MaximumRedirection 0 -ErrorAction SilentlyContinue).Headers["Location"]
 
 if ($lien -like ""){
-    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
-    Exit
+    Write-Host "ERREUR : LE LIEN N'EST PLUS D'ACTUALITÉ  (header)"
+    Exit
 }
 
 
@@ -33,28 +30,31 @@ $split = $lien.split("/")
 $bou = -1
 $requiredVersion = $split[-1]
 foreach ($item in $split){
-    $bou +=1
-    if ($item -eq "tag"){
-        $split[$bou] = "download"
-    }
-   
+    $bou +=1
+    if ($item -eq "tag"){
+        $split[$bou] = "download"
+    }
 }
+
+
 
 $fin = $split -join "/"
 Write-Host $fin
 Write-Host $requiredVersion
 
-$downloadUrl = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
+$downloadUrl   = $fin +"/rustdesk-"+ $requiredVersion +"-x86_64.exe"
 Write-Host $downloadUrl
 
 # ==== 2) Téléchargement de RustDesk portable ====
 if (-not (Test-Path "C:\Temp")) {
-    New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
-    Write-Log "Création du dossier C:\temp"
-    }
+    New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
+    Write-Log "Création du dossier C:\temp"
+    }
+
 Write-Log "Téléchargement de RustDesk..."
 Invoke-WebRequest -Uri $downloadUrl -OutFile $installTempPath -UseBasicParsing
 Write-Log "Téléchargement terminé."
+
 
 # ==== 3) Création de la configuration TOML ====
 $toml = @"
@@ -65,24 +65,26 @@ unlock_pin = ''
 trusted_devices = ''
 
 [options]
-key = 'CyX3Yjb1RXtIhYjaAAQoZuUnuUeiWg7pZwuHvSwVv4Q='
-api-server = 'http://185.81.55.61'
+key = 'ra5dXmgd1trQdRPZ6c8VwM0TJcGOod0CIR9BkZtUu9s='
+api-server = ''
 direct-access-port = '21118'
 custom-rendezvous-server = '185.81.55.61'
 av1-test = 'Y'
 verification-method = 'use-permanent-password'
 direct-server = 'Y'
-relay-server = '185.81.55.61'
+relay-server = ''
 "@
 
 $toml2 = @"
-password = 'Password1'
+password = '01AeX/Ao5O8kJig8WRUEkP3y0eT/7YBvnYnvKtNa7LKh//VsHNWwlnUbasgv2rJLjoFlHzf/mipLMSgB8W+WS7uCFa+Z52a9MMdZH49Hsni4rsfzWYBrCY'
+salt = '5ggkmmh2qyajdhf5u75k65ts4p5eptuu'
 "@
 
 if (-not (Test-Path $userConfigDir)) {
-    New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
-    Write-Output "Dossier de configuration créé : $userConfigDir"
+    New-Item -ItemType Directory -Path $userConfigDir -Force | Out-Null
+    Write-Output "Dossier de configuration créé : $userConfigDir"
 }
+
 Set-Content -Path $userConfigPath2 -Value $toml -Encoding UTF8
 Write-Output "Configuration TOML écrite dans : $userConfigPath2"
 
@@ -94,10 +96,11 @@ Write-Output "Configuration TOML écrite dans : $userConfigPath"
 Write-Output "Lancement de RustDesk portable..."
 Start-Process -FilePath $installTempPath -ArgumentList "--config", $userConfigPath2
 
-Write-Output "RustDesk lancé avec la configuration personnalisée."
 
+
+Write-Output "RustDesk lancé avec la configuration personnalisée."
 Write-Output "==== Script End ===="
 Write-Output "RustDesk lancé temporairement avec la configuration."
 
 
-C:\temp\rustdesk.exe
+C:\temp\rustdesk.exe 
